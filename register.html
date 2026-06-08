@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — ZIGO VIP</title>
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+.ref-group { margin-top:12px; }
+.ref-group label { display:flex;align-items:center;gap:6px;color:#aaa;font-size:.82rem;letter-spacing:1px;margin-bottom:6px;font-family:'Rajdhani',sans-serif; }
+.ref-group label i { color:#ffd700; }
+.ref-input { width:100%;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.35);border-radius:10px;padding:11px 14px;color:#ffd700;font-family:'Orbitron',monospace;font-size:.85rem;outline:none;transition:.3s;letter-spacing:1px; }
+.ref-input:focus { border-color:#ffd700;box-shadow:0 0 12px rgba(255,215,0,0.25); }
+.ref-input::placeholder { color:rgba(255,215,0,0.35);font-size:.75rem; }
+</style>
+</head>
+<body class="login-page">
+
+<div class="bg-video-container">
+  <video autoplay muted loop playsinline>
+    <source src="AKRO.mp4" type="video/mp4">
+  </video>
+  <div class="video-overlay"></div>
+</div>
+
+<div class="particles" id="particles"></div>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <div class="logo-icon"><i class="fas fa-cube"></i></div>
+    <span class="logo-text">ZIGO VIP</span>
+  </div>
+  <div class="nav-flag">🇪🇬</div>
+</nav>
+
+<div class="login-wrapper" style="margin-top:100px">
+  <div class="login-card">
+    <h1 class="welcome-title" style="font-size:1.6rem">Create Account</h1>
+
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="reg-user" placeholder="Choose a username">
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="reg-email" placeholder="Enter your email">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="pass-wrap">
+        <input type="password" id="reg-pass" placeholder="Create password (min 6 chars)">
+        <button class="eye-btn" onclick="toggleReg()"><i class="fas fa-eye" id="regEye"></i></button>
+      </div>
+    </div>
+
+    <!-- رمز الإحالة -->
+    <div class="ref-group">
+      <label><i class="fas fa-key"></i> Referral Code <span style="color:#ff4444">*</span></label>
+      <input type="text" class="ref-input" id="reg-ref" placeholder="Required to create account">
+    </div>
+
+    <button class="btn-login" onclick="doRegister()" style="margin-top:14px">
+      <i class="fas fa-user-plus"></i> Register Now
+    </button>
+
+    <button onclick="handleGoogleSignIn()" style="width:100%;margin-top:10px;padding:12px;display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:12px;color:#fff;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:.3s;">
+      <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20"> Register with Google
+    </button>
+
+    <p style="text-align:center;color:#aaa;margin-top:15px;font-family:'Rajdhani',sans-serif">
+      Already have an account? <a href="index.html" style="color:#00e5ff">Login</a>
+    </p>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <span>© <span id="footerYear"></span> — Developed by <strong>Ahmed Younis</strong> 🇪🇬</span>
+</footer>
+
+<script src="js/particles.js"></script>
+<script type="module" src="js/auth.js"></script>
+<script>
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+  function toggleReg(){
+    const p = document.getElementById('reg-pass'), i = document.getElementById('regEye');
+    p.type = p.type==='password'?'text':'password';
+    i.className = p.type==='password'?'fas fa-eye':'fas fa-eye-slash';
+  }
+</script>
+</body>
+</html>

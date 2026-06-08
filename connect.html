@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>AKRO API</title></head>
+<body>
+<!--
+  هذا الملف لم يعد يستخدم — الـ API الحقيقي على:
+  https://zigo.com/connect
+  أو عبر Hosting:
+  https://zigo.com/connect
+-->
+<script>
+  // Redirect للـ Cloud Function
+  const params = window.location.search;
+  fetch("https://zigo.com/connect" + params)
+    .then(r => r.json())
+    .then(data => {
+      document.open("text/plain");
+      document.write(JSON.stringify(data));
+      document.close();
+    })
+    .catch(e => {
+      document.open("text/plain");
+      document.write(JSON.stringify({ status: false, reason: e.message }));
+      document.close();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ZIGO API</title>
+</head>
+<body>
+<script type="module">
+// ==========================================
+// ZIGO VIP — JSON API Endpoint
+// URL: https://zigo.com/connect
+// Usage: GET connect?key=USER_KEY&uid=DEVICE_SERIAL
+// Response: pure JSON — no HTML
+// ==========================================
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, doc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyArlKKNRGT25aDRxFpk9GTP-ETXHC8Ny0s",
+  authDomain: "syst41453.firebaseapp.com",
+  projectId: "syst41453",
+  storageBucket: "syst41453.firebasestorage.app",
+  messagingSenderId: "623069157595",
+  appId: "1:623069157595:web:0f4815e88cd2823a5514fe"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ---- helper: send JSON response ----
+// GitHub Pages = static, لا يوجد Content-Type header
+// الحل: اكتب JSON في الـ body فقط — libcurl بيقرأ الـ body
+function sendJSON(obj) {
+  document.open("text/plain");
+  document.write(JSON.stringify(obj));
+  document.close();
+}
+
+async function handleRequest() {
+  const params = new URLSearchParams(window.location.search);
+  const userKey = (params.get("key") || "").trim().toUpperCase();
+  const uid     = (params.get("uid") || params.get("serial") || "").trim();
+
+  // لو مفيش key — رد بـ error
+  if (!userKey) {
+    sendJSON({ status: false, reason: "No key provided" });
+    return;
+  }
+
+  try {
+    const keysRef = collection(db, "keys");
+    const q       = query(keysRef, where("key", "==", userKey));
+    const snap    = await getDocs(q);
+
+    if (snap.empty) {
+      sendJSON({ status: false, reason: "Key not found" });
+      return;
+    }
+
+    const keyDoc  = snap.docs[0];
+    const keyData = keyDoc.data();
+
+    // تحقق من active
+    if (keyData.active === false) {
+      sendJSON({ status: false, reason: "Key disabled" });
+      return;
+    }
+
+    // تحقق من expiry
+    const now       = Date.now();
+    const expiresAt = keyData.expiresAt?.toDate
+      ? keyData.expiresAt.toDate().getTime()
+      : new Date(keyData.expiresAt).getTime();
+
+    if (expiresAt < now) {
+      sendJSON({ status: false, reason: "Key expired" });
+      return;
+    }
+
+    // تحقق من max devices
+    const usedCount = keyData.usedCount || 0;
+    const maxUsers  = keyData.maxUsers  || 1;
+    const devices   = keyData.devices   || [];
+    const isNewDevice = uid && !devices.includes(uid);
+
+    if (isNewDevice && usedCount >= maxUsers) {
+      sendJSON({ status: false, reason: "Max devices reached (" + maxUsers + "/" + maxUsers + ")" });
+      return;
+    }
+
+    // سجّل الجهاز الجديد
+    if (isNewDevice && uid) {
+      await updateDoc(doc(db, "keys", keyDoc.id), {
+        usedCount: increment(1),
+        devices:   [...devices, uid],
+        lastUsed:  serverTimestamp()
+      });
+    }
+
+    // حساب الأيام المتبقية
+    const daysLeft = Math.max(0, Math.ceil((expiresAt - now) / 86400000));
+
+    // رد بـ JSON الذي يتوقعه الـ Main.cpp
+    // Main.cpp يقرأ: result["status"] == true
+    //                result["data"]["token"]
+    //                result["data"]["rng"]   (timestamp)
+    //                result["data"]["EXP"]
+    sendJSON({
+      status: true,
+      data: {
+        token: keyDoc.id,
+        rng:   Math.floor(expiresAt / 1000),   // Unix timestamp (seconds) — يطابق time_t
+        EXP:   new Date(expiresAt).toLocaleDateString("en-GB"), // "DD/MM/YYYY"
+        game:  keyData.game     || "PUBG",
+        days:  daysLeft,
+        key:   userKey
+      }
+    });
+
+  } catch (err) {
+    sendJSON({ status: false, reason: "Server error: " + err.message });
+  }
+}
+
+handleRequest();
+</script>
+</body>
+</html>

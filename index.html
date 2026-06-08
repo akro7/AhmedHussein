@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZIGO VIP</title>
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+#soundOverlay {
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,10,0.92);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(6px);
+}
+.ovr-logo { font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;background:linear-gradient(90deg,#00e5ff,#8b00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px;letter-spacing:4px; }
+.ovr-flag { font-size:2rem;margin-bottom:40px; }
+.ovr-circle { width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,rgba(0,229,255,0.2),rgba(139,0,255,0.2));border:2px solid rgba(0,229,255,0.6);display:flex;align-items:center;justify-content:center;font-size:2.2rem;color:#00e5ff;margin-bottom:20px;animation:pulseC 1.5s ease-in-out infinite;box-shadow:0 0 30px rgba(0,229,255,0.3); }
+@keyframes pulseC { 0%,100%{transform:scale(1);box-shadow:0 0 20px rgba(0,229,255,.3)} 50%{transform:scale(1.1);box-shadow:0 0 50px rgba(0,229,255,.7)} }
+.ovr-text { font-family:'Rajdhani',sans-serif;font-size:1.15rem;color:#ccc;letter-spacing:1px; }
+.ovr-sub { font-family:'Rajdhani',sans-serif;font-size:.85rem;color:#555;margin-top:8px; }
+.sound-btn { position:fixed;bottom:80px;right:15px;z-index:200;background:rgba(0,229,255,0.15);border:1px solid rgba(0,229,255,0.5);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#00e5ff;font-size:1.1rem;cursor:pointer;backdrop-filter:blur(10px);transition:all .3s; }
+
+/* رمز الإحالة */
+.ref-group { margin-top:12px; }
+.ref-group label { display:flex;align-items:center;gap:6px;color:#aaa;font-size:.82rem;letter-spacing:1px;margin-bottom:6px;font-family:'Rajdhani',sans-serif; }
+.ref-group label i { color:#ffd700; }
+.ref-input { width:100%;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.35);border-radius:10px;padding:11px 14px;color:#ffd700;font-family:'Orbitron',monospace;font-size:.85rem;outline:none;transition:.3s;letter-spacing:1px; }
+.ref-input:focus { border-color:#ffd700;box-shadow:0 0 12px rgba(255,215,0,0.25); }
+.ref-input::placeholder { color:rgba(255,215,0,0.35);font-size:.75rem; }
+</style>
+</head>
+<body class="login-page">
+
+<div id="soundOverlay" onclick="unlockSound()">
+  <div class="ovr-logo">ZIGO VIP</div>
+  <div class="ovr-flag">🇪🇬</div>
+  <div class="ovr-circle"><i class="fas fa-volume-up"></i></div>
+  <div class="ovr-text">Tap anywhere to enter</div>
+  <div class="ovr-sub">Click to enable sound & video</div>
+</div>
+
+<div class="bg-video-container">
+  <video autoplay muted loop playsinline id="bgVideo">
+    <source src="AKRO.mp4" type="video/mp4">
+  </video>
+  <div class="video-overlay"></div>
+</div>
+
+<button class="sound-btn" id="soundBtn" onclick="toggleSound()" style="display:none">
+  <i class="fas fa-volume-up" id="soundIcon"></i>
+</button>
+
+<div class="particles" id="particles"></div>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <div class="logo-icon"><i class="fas fa-cube"></i></div>
+    <span class="logo-text">ZIGO VIP</span>
+  </div>
+  <div class="nav-flag">🇪🇬</div>
+</nav>
+
+<a href="register.html" class="reg-banner">
+  <i class="fas fa-user-plus"></i>
+  <span>FREE REGISTRATION</span>
+  <i class="fas fa-arrow-right"></i>
+  <div class="reg-badge">FREE</div>
+</a>
+<p class="reg-sub"><i class="fas fa-gift"></i> New users register for FREE!</p>
+
+<div class="login-wrapper">
+  <div class="login-card">
+    <h1 class="welcome-title">Welcome Back</h1>
+
+    <div class="form-group">
+      <label>Username or Email</label>
+      <input type="text" id="username" placeholder="Enter username or email" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <div class="pass-wrap">
+        <input type="password" id="password" placeholder="Enter password">
+        <button class="eye-btn" onclick="togglePass()"><i class="fas fa-eye" id="eyeIcon"></i></button>
+      </div>
+    </div>
+
+    <!-- رمز الإحالة -->
+    <div class="ref-group">
+      <label><i class="fas fa-key"></i> Referral Code <span style="color:#ff4444">*</span></label>
+      <input type="text" class="ref-input" id="refCode" placeholder="Enter referral code to access">
+    </div>
+
+    <label class="stay-logged" style="margin-top:12px">
+      <input type="checkbox" id="stayLogged">
+      <span>Stay logged in</span>
+    </label>
+
+    <button class="btn-login" onclick="doLogin()">
+      <i class="fas fa-sign-in-alt"></i> Login Now
+    </button>
+
+    <button onclick="handleGoogleSignIn()" style="width:100%;margin-top:10px;padding:12px;display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:12px;color:#fff;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:.3s;">
+      <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20"> Sign in with Google
+    </button>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  <span>© <span id="footerYear"></span> — Developed by <strong>Ahmed Younis</strong> 🇪🇬</span>
+</footer>
+
+<script src="js/particles.js"></script>
+<script type="module" src="js/auth.js"></script>
+<script>
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+  const video = document.getElementById('bgVideo');
+  video.muted = true; video.play().catch(()=>{});
+
+  function unlockSound(){
+    video.muted = false; video.volume = 0.7;
+    video.play().catch(()=>{ video.muted = true; });
+    const ovr = document.getElementById('soundOverlay');
+    ovr.style.transition = 'opacity .6s'; ovr.style.opacity = '0';
+    setTimeout(()=>ovr.remove(), 600);
+    document.getElementById('soundBtn').style.display = 'flex';
+  }
+  let soundOn = true;
+  function toggleSound(){
+    soundOn = !soundOn; video.muted = !soundOn;
+    document.getElementById('soundIcon').className = soundOn ? 'fas fa-volume-up' : 'fas fa-volume-mute';
+  }
+  function togglePass(){
+    const p = document.getElementById('password'), i = document.getElementById('eyeIcon');
+    p.type = p.type==='password'?'text':'password';
+    i.className = p.type==='password'?'fas fa-eye':'fas fa-eye-slash';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — ZIGO VIP</title>
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+
+<div class="bg-video-container">
+  <video autoplay muted loop playsinline>
+    <source src="AKRO.mp4" type="video/mp4">
+  </video>
+  <div class="video-overlay dark"></div>
+</div>
+
+<div class="particles" id="particles"></div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-logo">
+    <div class="logo-icon"><i class="fas fa-cube"></i></div>
+    <span class="logo-text">ZIGO VIP</span>
+  </div>
+  <button class="menu-btn" onclick="toggleMenu()" id="menuBtn"><i class="fas fa-bars"></i></button>
+</nav>
+
+<!-- Slide Menu -->
+<div class="slide-menu" id="slideMenu">
+  <button class="close-menu" onclick="toggleMenu()"><i class="fas fa-times"></i></button>
+  <ul>
+    <li><a href="#" onclick="showSection('generate')"><i class="fas fa-key"></i> Keys</a></li>
+    <li><a href="#" onclick="showSection('generate')"><i class="fas fa-plus-circle"></i> Generate</a></li>
+    <li><a href="#" onclick="showSection('manage')"><i class="fas fa-list"></i> Manage Keys</a></li>
+  </ul>
+  <div class="menu-user">
+    <i class="fas fa-user-circle"></i>
+    <span id="menuUsername">User</span>
+    <i class="fas fa-chevron-down"></i>
+    <div class="user-dropdown">
+      <a href="index.html" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </div>
+</div>
+
+<div class="dash-content">
+
+  <!-- Expiry Banner -->
+  <div class="expiry-banner">
+    <i class="fas fa-check-circle"></i>
+    Account Expires on: 2099-01-12 03:17:04
+  </div>
+
+  <!-- Welcome Card -->
+  <div class="welcome-card">
+    <div>
+      <p class="wc-greeting">Welcome back, <span id="dashUser" class="wc-name">User</span>!</p>
+      <p class="wc-sub">ZIGO VIP Panel Dashboard</p>
+    </div>
+    <div class="wc-badge">👑 Reseller</div>
+  </div>
+
+  <!-- Subscription Countdown -->
+  <div class="section-card">
+    <h3 class="section-title"><i class="fas fa-clock"></i> Subscription Status</h3>
+    <div class="countdown-grid">
+      <div class="cd-box"><span id="cd-days">--</span><small>DAYS</small></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-box"><span id="cd-hours">--</span><small>HOURS</small></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-box"><span id="cd-min">--</span><small>MINUTES</small></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-box"><span id="cd-sec">--</span><small>SECONDS</small></div>
+    </div>
+    <p class="time-remaining">⏳ Time Remaining: <span id="timeText" style="color:#00e5ff"></span></p>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="section-card">
+    <h3 class="section-title"><i class="fas fa-bolt" style="color:#ff4fa3"></i> Quick Actions</h3>
+    <div class="actions-grid">
+      <div class="action-card" onclick="showSection('generate')">
+        <div class="action-icon teal"><i class="fas fa-plus"></i></div>
+        <div><b>Generate Key</b><p>Create new activation key</p></div>
+      </div>
+      <div class="action-card" onclick="showSection('manage')">
+        <div class="action-icon teal"><i class="fas fa-key"></i></div>
+        <div><b>Manage Keys</b><p>View & manage all keys</p></div>
+      </div>
+      <div class="action-card" onclick="showSection('profile')">
+        <div class="action-icon teal"><i class="fas fa-user-cog"></i></div>
+        <div><b>Profile Settings</b><p>Update your profile</p></div>
+      </div>
+      <div class="action-card" onclick="location.reload()">
+        <div class="action-icon teal"><i class="fas fa-sync-alt"></i></div>
+        <div><b>Refresh</b><p>Refresh dashboard data</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Stats -->
+  <div class="section-card">
+    <h3 class="section-title"><i class="fas fa-chart-bar" style="color:#ff4fa3"></i> System Statistics</h3>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <span class="stat-num" id="totalKeys">0</span>
+        <span class="stat-label">Total Keys</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" style="color:#00ff88">0</span>
+        <span class="stat-label">Active Keys</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num" style="color:#ff4444">0</span>
+        <span class="stat-label">Expired</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generate Key Section -->
+  <div class="section-card" id="section-generate">
+    <div class="section-header">
+      <h3 class="section-title" style="margin:0"><i class="fas fa-key"></i> Create License</h3>
+      <button class="icon-btn"><i class="fas fa-users"></i></button>
+    </div>
+
+    <!-- Total Saldo -->
+    <div class="saldo-bar">
+      <i class="fas fa-info-circle"></i>
+      <i class="fas fa-wallet"></i>
+      Total Saldo: <b id="saldoAmt">$0</b>
+    </div>
+
+    <div class="form-group">
+      <label>Game</label>
+      <select id="gen-game" class="select-input">
+        <option>PUBG Mobile</option>
+        <option>Free Fire</option>
+        <option>Call of Duty</option>
+        <option>Fortnite</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Max Devices</label>
+      <input type="number" id="gen-devices" value="1" min="1" class="text-input">
+    </div>
+
+    <div class="form-group">
+      <label>Duration</label>
+      <select id="gen-duration" class="select-input" onchange="calcEstimation()">
+        <option value="10">2 Hours — $0.10/Device</option>
+        <option value="20">5 Hours — $0.20/Device</option>
+        <option value="50">12 Hours — $0.50/Device</option>
+        <option value="80">1 Day — $0.80/Device</option>
+        <option value="150">3 Days — $1.50/Device</option>
+        <option value="250">7 Days — $2.50/Device</option>
+        <option value="350">14 Days — $3.50/Device</option>
+        <option value="500">30 Days — $5.00/Device</option>
+        <option value="1000">60 Days — $10.00/Device</option>
+        <option value="2000">100 Days — $20.00/Device</option>
+      </select>
+    </div>
+
+    <label class="toggle-wrap">
+      <input type="checkbox" id="customKeyToggle" onchange="toggleCustomKey()">
+      <div class="toggle-switch"></div>
+      <span>Custom Key</span>
+    </label>
+
+    <div class="form-group" id="customKeyGroup" style="display:none">
+      <label>Input Your Key</label>
+      <input type="text" id="customKeyVal" placeholder="Enter custom key..." class="text-input">
+    </div>
+
+    <div class="form-group">
+      <label>Bulk Keys</label>
+      <select id="gen-bulk" class="select-input" onchange="calcEstimation()">
+        <option value="1">1 Key</option>
+        <option value="5">5 Keys</option>
+        <option value="10">10 Keys</option>
+        <option value="50">50 Keys</option>
+        <option value="100">100 Keys</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Max Users per Key</label>
+      <select id="gen-maxusers" class="select-input">
+        <option value="1">1 User</option>
+        <option value="10">10 Users</option>
+        <option value="100">100 Users</option>
+        <option value="1000">1,000 Users</option>
+        <option value="5000">5,000 Users</option>
+        <option value="10000">10,000 Users (MAX)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Estimation</label>
+      <input type="text" id="gen-estimation" value="$0.10" readonly class="text-input readonly">
+    </div>
+
+    <button class="btn-generate" onclick="generateKey()">
+      <i class="fas fa-key"></i> Generate Key
+    </button>
+
+    <!-- Generated Keys Output -->
+    <div id="generatedOutput" style="display:none" class="generated-box">
+      <h4>Generated Keys:</h4>
+      <div id="keysList"></div>
+    </div>
+  </div>
+
+  <!-- Manage Keys -->
+  <div class="section-card" id="section-manage">
+    <h3 class="section-title"><i class="fas fa-list"></i> Recent Activity <a href="#" style="color:#00e5ff;font-size:.8rem;margin-left:10px">View All</a></h3>
+    <div class="activity-table">
+      <div class="table-header">
+        <span>ID</span><span>ACTION</span><span>KEY</span>
+      </div>
+      <div id="activityRows">
+        <div style="text-align:center;padding:20px;color:#666;font-family:'Rajdhani',sans-serif">No activity yet</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end dash-content -->
+
+<!-- Loader overlay -->
+<div class="loader-overlay" id="loaderOverlay">
+  <div class="loader-box">
+    <div class="loader-spinner"></div>
+    <p>Connecting to server...</p>
+    <p class="loader-url">https://AhmedHussein.com/connect</p>
+  </div>
+</div>
+
+<!-- Telegram FAB -->
+<a href="https://t.me/01508294415" target="_blank" class="fab-telegram"><i class="fab fa-telegram"></i><span class="fab-badge">1</span></a>
+
+<footer class="site-footer">
+  <span>© <span id="footerYear"></span> — Developed by <strong>Ahmed Younis</strong> 🇪🇬</span>
+</footer>
+
+<script src="js/particles.js"></script>
+<script type="module" src="js/dashboard.js"></script>
+<script>
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
